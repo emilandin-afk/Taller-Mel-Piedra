@@ -248,7 +248,7 @@ async function dbLoad(){
   try{
     const controller=new AbortController();
     setTimeout(()=>controller.abort(),8000);
-    const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,
+    const r=await fetch(`${SB_URL,signal:controller.signal}/rest/v1/agenda?id=eq.main&select=data`,
   const rows=await r.json();
 return rows.length?rows[0].data:null;
 }catch(e){console.error(‘Load error’,e);return null;}
