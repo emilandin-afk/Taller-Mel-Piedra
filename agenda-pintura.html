@@ -246,19 +246,22 @@ saveState();
 
 let saveTO=null;
 async function dbLoad(){
+const overlay=document.getElementById(‘loadingOverlay’);
+const showErr=function(msg){overlay.innerHTML=’<div style="color:#e07050;font-family:monospace;font-size:13px;padding:30px;text-align:center">’+msg+’</div>’;};
 try{
-const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H_GET});
-if(!r.ok){
-document.getElementById(‘loadingOverlay’).innerHTML=’<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">Error HTTP ‘+r.status+’: ‘+r.statusText+’</div>’;
-return null;
-}
+const ctrl=new AbortController();
+const tid=setTimeout(function(){ctrl.abort();},5000);
+const r=await fetch(SB_URL+’/rest/v1/agenda?id=eq.main&select=data’,{headers:SB_H_GET,signal:ctrl.signal});
+clearTimeout(tid);
+if(!r.ok){showErr(’HTTP ‘+r.status+’ ‘+r.statusText);return null;}
 const rows=await r.json();
 return rows.length?rows[0].data:null;
 }catch(e){
-document.getElementById(‘loadingOverlay’).innerHTML=’<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">’+e.name+’: ‘+e.message+’</div>’;
+showErr(e.name+’: ’+e.message);
 return null;
 }
 }
+
 function saveState(){
 const ind=document.getElementById(‘saveIndicator’);
 ind.textContent=‘Guardando…’;ind.className=‘save-indicator saving’;
