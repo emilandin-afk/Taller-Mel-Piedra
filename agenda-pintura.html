@@ -245,11 +245,22 @@ saveState();
 
 let saveTO=null;
 async function dbLoad(){
-try{
-const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H_GET});
-if(!r.ok){
-document.getElementById(‘loadingOverlay’).innerHTML=’<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">Error HTTP ‘+r.status+’: ‘+r.statusText+’</div>’;
-return null;
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),6000);
+    const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H_GET,signal:ctrl.signal});
+    clearTimeout(tid);
+    if(!r.ok){
+      document.getElementById('loadingOverlay').innerHTML='<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">Error HTTP '+r.status+'</div>';
+      return null;
+    }
+    const rows=await r.json();
+    return rows.length?rows[0].data:null;
+  }catch(e){
+    document.getElementById('loadingOverlay').innerHTML='<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">'+e.name+': '+e.message+'</div>';
+    return null;
+  }
+}
 }
 const rows=await r.json();
 return rows.length?rows[0].data:null;
