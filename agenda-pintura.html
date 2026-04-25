@@ -207,6 +207,7 @@ table.att-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monosp
 </div>
 </div>
 <div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const SB_URL='https://oekskzpvpzzfspdilrhj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU';
@@ -228,7 +229,7 @@ function weekKey(mon){return `w${mon.toISOString().slice(0,10)}`}
 function getSlots(mk,bid){
 if(baseOverrides[mk]&&baseOverrides[mk][bid]!==undefined)return baseOverrides[mk][bid];
 const p=Object.keys(baseOverrides).filter(k=>k<mk).sort();
-for(let i=p.length-1;i>=0;i–-){if(baseOverrides[p[i]][bid]!==undefined)return baseOverrides[p[i]][bid];}
+let gi=p.length;while(gi>0){gi=gi-1;if(baseOverrides[p[gi]][bid]!==undefined)return baseOverrides[p[gi]][bid];}
 return Array(SLOTS).fill(’’);
 }
 function getMonthBase(mk){const r={};SCHEDULE.forEach(d=>d.blocks.forEach(b=>{r[b.id]=getSlots(mk,b.id).slice();}));return r;}
@@ -238,29 +239,18 @@ if(!baseOverrides[mk][bid])baseOverrides[mk][bid]=getSlots(mk,bid).slice();
 baseOverrides[mk][bid][idx]=val;
 const p=Object.keys(baseOverrides).filter(k=>k<mk).sort();
 let inh=Array(SLOTS).fill(’’);
-for(let i=p.length-1;i>=0;i–-){if(baseOverrides[p[i]][bid]!==undefined){inh=baseOverrides[p[i]][bid];break;}}
+let si=p.length;while(si>0){si=si-1;if(baseOverrides[p[si]][bid]!==undefined){inh=baseOverrides[p[si]][bid];break;}}
 if(JSON.stringify(baseOverrides[mk][bid])===JSON.stringify(inh)){delete baseOverrides[mk][bid];if(!Object.keys(baseOverrides[mk]).length)delete baseOverrides[mk];}
 saveState();
 }
 
 let saveTO=null;
 async function dbLoad(){
-  try{
-    const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),6000);
-    const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H_GET,signal:ctrl.signal});
-    clearTimeout(tid);
-    if(!r.ok){
-      document.getElementById('loadingOverlay').innerHTML='<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">Error HTTP '+r.status+'</div>';
-      return null;
-    }
-    const rows=await r.json();
-    return rows.length?rows[0].data:null;
-  }catch(e){
-    document.getElementById('loadingOverlay').innerHTML='<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">'+e.name+': '+e.message+'</div>';
-    return null;
-  }
-}
+try{
+const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H_GET});
+if(!r.ok){
+document.getElementById(‘loadingOverlay’).innerHTML=’<div style="color:#e07050;font-family:monospace;font-size:14px;padding:30px;text-align:center">Error HTTP ‘+r.status+’: ‘+r.statusText+’</div>’;
+return null;
 }
 const rows=await r.json();
 return rows.length?rows[0].data:null;
@@ -451,7 +441,6 @@ if(tab===‘semana’)renderWeek();if(tab===‘resumen’)renderResumen();if(tab
 function showToast(msg){const t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);setTimeout(()=>t.classList.remove(‘show’),2300);}
 function esc(s){return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);}
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-</body>
 
+</body>
 </html>
