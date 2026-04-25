@@ -496,7 +496,7 @@ if(tab===‘resumen’)renderResumen();
 if(tab===‘disp’)renderDisp();
 }
 function toast(msg){var t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);setTimeout(function(){t.classList.remove(‘show’);},2300);}
-function esc(s){return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);}
+function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
 </script>
 
 </body>
