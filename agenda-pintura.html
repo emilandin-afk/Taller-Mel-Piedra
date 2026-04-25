@@ -228,7 +228,7 @@ function weekKey(mon){return `w${mon.toISOString().slice(0,10)}`}
 function getSlots(mk,bid){
 if(baseOverrides[mk]&&baseOverrides[mk][bid]!==undefined)return baseOverrides[mk][bid];
 const p=Object.keys(baseOverrides).filter(k=>k<mk).sort();
-for(let i=p.length-1;i>=0;i–){if(baseOverrides[p[i]][bid]!==undefined)return baseOverrides[p[i]][bid];}
+for(let i=p.length-1;i>=0;i–-){if(baseOverrides[p[i]][bid]!==undefined)return baseOverrides[p[i]][bid];}
 return Array(SLOTS).fill(’’);
 }
 function getMonthBase(mk){const r={};SCHEDULE.forEach(d=>d.blocks.forEach(b=>{r[b.id]=getSlots(mk,b.id).slice();}));return r;}
