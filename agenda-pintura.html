@@ -238,7 +238,7 @@ if(!baseOverrides[mk][bid])baseOverrides[mk][bid]=getSlots(mk,bid).slice();
 baseOverrides[mk][bid][idx]=val;
 const p=Object.keys(baseOverrides).filter(k=>k<mk).sort();
 let inh=Array(SLOTS).fill(’’);
-for(let i=p.length-1;i>=0;i–){if(baseOverrides[p[i]][bid]!==undefined){inh=baseOverrides[p[i]][bid];break;}}
+for(let i=p.length-1;i>=0;i–-){if(baseOverrides[p[i]][bid]!==undefined){inh=baseOverrides[p[i]][bid];break;}}
 if(JSON.stringify(baseOverrides[mk][bid])===JSON.stringify(inh)){delete baseOverrides[mk][bid];if(!Object.keys(baseOverrides[mk]).length)delete baseOverrides[mk];}
 saveState();
 }
