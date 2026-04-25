@@ -1,21 +1,137 @@
-<!DOCTYPE html>
+!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mel Piedra - Agenda</title>
+<title>Mel Piedra · Lugares Disponibles</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:ital,wght@0,300;0,400;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0d0d0d;--glass:rgba(8,8,8,0.80);--border:rgba(255,255,255,0.10);--white:#f5f2ee;--off:rgba(245,242,238,0.80);--muted:rgba(245,242,238,0.36);--accent:#c8a97e;--accent-d:rgba(200,169,126,0.28);--green:#6dbe72;--green-d:rgba(109,190,114,0.18);--green-b:rgba(109,190,114,0.38);--red:#d05a4a;--red-d:rgba(208,90,74,0.18);--red-b:rgba(208,90,74,0.38);}
+*{box-sizing:border-box;margin:0;padding:0}html,body{min-height:100vh;overflow-x:hidden}
+body{font-family:'Cormorant Garamond',serif;background:var(--black);color:var(--white)}
+.bg{position:fixed;inset:0;background-image:url('https://raw.githubusercontent.com/TallerMelPiedra/Taller-Mel-Piedra/main/IMG_9371.jpeg');background-size:cover;background-position:center top;filter:grayscale(15%) brightness(0.18) contrast(1.2);z-index:0}
+.vig{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 30%,transparent 10%,rgba(0,0,0,0.82) 100%);z-index:1}
+.grain{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");z-index:2;pointer-events:none}
+.page{position:relative;z-index:3;max-width:680px;margin:0 auto;padding:0 18px 80px;min-height:100vh;display:flex;flex-direction:column}
+.loading{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(8px)}
+.loading.hidden{display:none}
+.spinner{width:32px;height:32px;border:2px solid rgba(200,169,126,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+header{padding:52px 0 32px;text-align:center}
+.tag-line{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;opacity:0;animation:fu 0.7s 0.1s forwards}
+h1{font-family:'Cormorant Upright',serif;font-weight:300;font-size:clamp(2rem,8vw,3.2rem);letter-spacing:0.04em;line-height:1.05;opacity:0;animation:fu 0.8s 0.25s forwards}
+h1 em{font-style:italic;color:var(--accent)}
+.sub{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--muted);margin-top:8px;opacity:0;animation:fu 0.7s 0.4s forwards}
+.hline{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:18px;opacity:0;animation:fu 0.7s 0.5s forwards}
+.hl{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--accent-d))}.hlr{background:linear-gradient(90deg,var(--accent-d),transparent)}
+.hd{width:5px;height:5px;background:var(--accent);transform:rotate(45deg);flex-shrink:0}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.intro{text-align:center;font-family:'DM Mono',monospace;font-size:0.63rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:26px;opacity:0;animation:fu 0.7s 0.6s forwards}
+.days{display:flex;flex-direction:column;gap:14px;opacity:0;animation:fu 0.8s 0.7s forwards}
+.day-card{background:var(--glass);border:1px solid var(--border);border-radius:5px;overflow:hidden;backdrop-filter:blur(20px)}
+.day-hdr{padding:12px 20px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:baseline;justify-content:space-between}
+.day-name{font-family:'Cormorant Upright',serif;font-size:1.15rem;font-style:italic;color:var(--accent);letter-spacing:0.04em}
+.cnt-free{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--green);letter-spacing:0.1em}
+.cnt-full{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--red);letter-spacing:0.1em}
+.cnt-mix{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--accent);letter-spacing:0.1em}
+.block{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.04)}.block:last-child{border-bottom:none}
+.block-time{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,169,126,0.55);margin-bottom:10px}
+.spots{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.spot-free{font-family:'DM Mono',monospace;font-size:0.7rem;padding:6px 14px;border-radius:4px;background:var(--green-d);border:1px solid var(--green-b);color:var(--green);letter-spacing:0.06em;animation:gpulse 3s ease-in-out infinite}
+@keyframes gpulse{0%,100%{box-shadow:0 0 0 0 rgba(109,190,114,0)}50%{box-shadow:0 0 8px 2px rgba(109,190,114,0.12)}}
+.block-full{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.full-tag{font-family:'DM Mono',monospace;font-size:0.68rem;padding:5px 14px;border-radius:4px;background:var(--red-d);border:1px solid var(--red-b);color:var(--red);letter-spacing:0.06em;flex-shrink:0}
+.wa-espera{display:inline-flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:0.63rem;letter-spacing:0.06em;padding:6px 14px;border-radius:4px;background:rgba(37,211,102,0.10);border:1px solid rgba(37,211,102,0.28);color:#5dd67a;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.wa-espera:hover{background:rgba(37,211,102,0.2)}
+.wa-section{margin-top:36px;text-align:center;opacity:0;animation:fu 0.8s 1s forwards}
+.wa-intro{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--muted);margin-bottom:18px;line-height:1.7}
+.wa-main{display:inline-flex;align-items:center;gap:12px;font-family:'Cormorant Upright',serif;font-size:1.15rem;letter-spacing:0.06em;padding:16px 36px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.35);color:#5dd67a;border-radius:5px;text-decoration:none;transition:all 0.25s}
+.wa-main:hover{background:rgba(37,211,102,0.22);transform:translateY(-1px)}
+footer{margin-top:auto;padding:40px 0 20px;text-align:center;font-family:'DM Mono',monospace;font-size:0.57rem;letter-spacing:0.15em;color:rgba(245,242,238,0.16);text-transform:uppercase}
+.no-data{text-align:center;padding:60px 20px;color:var(--muted);font-style:italic}
+.wa-ico{width:16px;height:16px;fill:currentColor;flex-shrink:0}
+</style>
 </head>
-<body style="background:#0d0d0d;color:white;font-family:sans-serif;padding:20px">
-<h1>Estudio Mel Piedra</h1>
-<div id="status">Conectando...</div>
+<body>
+<div class="bg"></div><div class="vig"></div><div class="grain"></div>
+<div class="loading" id="loading"><div class="spinner"></div><div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:rgba(245,242,238,0.4);letter-spacing:0.15em;text-transform:uppercase">Cargando…</div></div>
+<div class="page">
+  <header>
+    <div class="tag-line">Taller de Pintura · 2026</div>
+    <h1><em>Mel Piedra</em></h1>
+    <div class="sub">Lugares disponibles para nuevos alumnos</div>
+    <div class="hline"><div class="hl"></div><div class="hd"></div><div class="hl hlr"></div></div>
+  </header>
+  <div class="intro">Disponibilidad actual · Se actualiza en tiempo real</div>
+  <div class="days" id="days"><div class="no-data">Cargando…</div></div>
+  <div class="wa-section">
+    <p class="wa-intro">¿Te interesa sumarte? Escribime y coordinamos.</p>
+    <a class="wa-main" id="waMainBtn" href="https://wa.me/59899549644?text=Hola%20Mel!%20Vi%20que%20hay%20lugares%20disponibles%20y%20me%20gustar%C3%ADa%20consultar%20%F0%9F%8E%A8" target="_blank">
+      <svg class="wa-ico" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Consultar por WhatsApp
+    </a>
+  </div>
+  <footer>Estudio Mel Piedra · Taller de Pintura</footer>
+</div>
 <script>
-var SB='https://oekskzpvpzzfspdilrhj.supabase.co';
-var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU';
-document.getElementById('status').textContent='JS funciona!';
-fetch(SB+'/rest/v1/agenda?id=eq.main&select=data',{headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
-.then(function(r){return r.json();})
-.then(function(d){document.getElementById('status').textContent='Supabase OK: '+JSON.stringify(d).slice(0,50);})
-.catch(function(e){document.getElementById('status').textContent='Error: '+e.message;});
+const SB_URL='https://oekskzpvpzzfspdilrhj.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU';
+const SCHEDULE=[
+  {id:'lunes',name:'Lunes',blocks:[{id:'lun-a',lbl:'14:30 – 17:30',name:'Lunes 14:30'},{id:'lun-b',lbl:'18:00 – 21:00',name:'Lunes 18:00'}]},
+  {id:'martes',name:'Martes',blocks:[{id:'mar-a',lbl:'17:30 – 20:30',name:'Martes 17:30'}]},
+  {id:'miercoles',name:'Miércoles',blocks:[{id:'mie-a',lbl:'10:30 – 13:30',name:'Miércoles 10:30'},{id:'mie-b',lbl:'18:00 – 21:00',name:'Miércoles 18:00'}]},
+  {id:'jueves',name:'Jueves',blocks:[{id:'jue-a',lbl:'14:30 – 17:30',name:'Jueves 14:30'},{id:'jue-b',lbl:'18:00 – 21:00',name:'Jueves 18:00'}]},
+  {id:'sabado',name:'Sábado',blocks:[{id:'sab-a',lbl:'10:00 – 13:00',name:'Sábado 10:00'},{id:'sab-b',lbl:'15:00 – 18:00',name:'Sábado 15:00'}]},
+];
+const SLOTS=8;const WA='59899549644';
+function monthKey(m,y){return `${y}-${String(m+1).padStart(2,'0')}`}
+function waLink(msg){return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;}
+function waIco(){return `<svg class="wa-ico" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;}
+function getSlots(ov,mk,bid){
+  if(ov[mk]&&ov[mk][bid]!==undefined)return ov[mk][bid];
+  const p=Object.keys(ov).filter(k=>k<mk).sort();
+  for(let i=p.length-1;i>=0;i--){if(ov[p[i]][bid]!==undefined)return ov[p[i]][bid];}
+  return Array(SLOTS).fill('');
+}
+async function render(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    const rows=await r.json();
+    document.getElementById('loading').classList.add('hidden');
+    if(!rows.length||!rows[0].data){document.getElementById('days').innerHTML='<div class="no-data">Sin datos cargados aún.</div>';return;}
+    const ov=rows[0].data.baseOverrides||{};
+    const now=new Date();const mk=monthKey(now.getMonth(),now.getFullYear());
+    let anyFree=false;
+    const html=SCHEDULE.map(day=>{
+      let dayFree=0,dayTotal=0;
+      const bh=day.blocks.map(block=>{
+        const slots=getSlots(ov,mk,block.id);
+        const free=slots.filter(s=>!s).length;dayFree+=free;dayTotal+=SLOTS;
+        if(free>0){
+          anyFree=true;
+          const nums=slots.map((s,i)=>s?null:i+1).filter(Boolean);
+          return `<div class="block"><div class="block-time">${block.lbl}</div><div class="spots">${nums.map(n=>`<span class="spot-free">Lugar ${n}</span>`).join('')}</div></div>`;
+        }else{
+          const msg=`Hola Mel! Me gustaría anotarme en lista de espera para ${block.name} 🎨`;
+          return `<div class="block"><div class="block-time">${block.lbl}</div><div class="block-full"><span class="full-tag">✗ No disponible</span><a class="wa-espera" href="${waLink(msg)}" target="_blank">${waIco()} Lista de espera</a></div></div>`;
+        }
+      }).join('');
+      let cnt;
+      if(dayFree===0)cnt=`<span class="cnt-full">Sin lugares</span>`;
+      else if(dayFree===dayTotal)cnt=`<span class="cnt-free">${dayFree} disponible${dayFree!==1?'s':''}</span>`;
+      else cnt=`<span class="cnt-mix">${dayFree} de ${dayTotal} libre${dayFree!==1?'s':''}</span>`;
+      return `<div class="day-card"><div class="day-hdr"><span class="day-name">${day.name}</span>${cnt}</div>${bh}</div>`;
+    }).join('');
+    document.getElementById('days').innerHTML=html;
+    if(!anyFree)document.getElementById('waMainBtn').href=waLink('Hola Mel! Los turnos están completos, me gustaría anotarme en lista de espera 🎨');
+  }catch(e){
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('days').innerHTML='<div class="no-data">Error al cargar. Revisá tu conexión.</div>';
+  }
+}
+render();setInterval(render,60000);
 </script>
 </body>
 </html>
+
