@@ -278,9 +278,8 @@ setTimeout(()=>{ind.textContent=’’;ind.className=‘save-indicator’;},2000
 },800);
 }
 
-async function init(){
-const data=await dbLoad();
-if(data){students=data.students||[];baseOverrides=data.baseOverrides||{};frozen=data.frozen||{};attendance=data.attendance||{};attNotes=data.attNotes||{};}
+function init(){
+// Start immediately without waiting for network
 document.getElementById(‘loadingOverlay’).classList.add(‘hidden’);
 const now=new Date();
 document.getElementById(‘baseMonth’).value=now.getMonth();
@@ -288,6 +287,18 @@ document.getElementById(‘baseYear’).value=now.getFullYear();
 document.getElementById(‘resumeMonth’).value=now.getMonth();
 document.getElementById(‘resumeYear’).value=now.getFullYear();
 renderChips();renderBase();
+// Load from Supabase in background
+dbLoad().then(function(data){
+if(data){
+students=data.students||[];
+baseOverrides=data.baseOverrides||{};
+frozen=data.frozen||{};
+attendance=data.attendance||{};
+attNotes=data.attNotes||{};
+renderChips();renderBase();
+showToast(‘Agenda cargada ✓’);
+}
+});
 }
 init();
 
@@ -446,4 +457,4 @@ function esc(s){return String(s).replace(/&/g,’&’).replace(/</g,’<’).rep
 </script>
 
 </body>
-</html> 
+</html>
