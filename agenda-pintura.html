@@ -243,7 +243,7 @@ save();
 var saveT=null;
 function save(){
 var el=document.getElementById(‘sind’);
-el.textContent=‘Guardando…’;el.className=‘sind saving’;
+el.textContent=‘Guardando...’;el.className=‘sind saving’;
 clearTimeout(saveT);
 saveT=setTimeout(function(){
 fetch(SB+’/rest/v1/agenda?id=eq.main’,{
