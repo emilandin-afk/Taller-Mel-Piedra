@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download agenda
-        run: curl -L "https://gist.githubusercontent.com/emilandin-afk/470b1e55469780d577350683ecbd985c/raw/agenda-pintura.html" -o agenda-pintura.html
+run: curl -L "https://gist.githubusercontent.com/emilandin-afk/470b1e55469780d577350683ecbd985c/raw/agenda-pintura.html" -o agenda-pintura.html
       - name: Commit
         run: |
           git config user.email "action@github.com"
