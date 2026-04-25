@@ -255,28 +255,33 @@ setTimeout(function(){ind.textContent=’’;ind.className=‘save-indicator’;
 },800);
 }
 
-async function init(){
-try{
-const r=await fetch(SB_URL+’/rest/v1/agenda?id=eq.main&select=data’,{headers:{‘apikey’:SB_KEY,‘Authorization’:’Bearer ’+SB_KEY}});
-const rows=await r.json();
-document.getElementById(‘loading’).classList.add(‘hidden’);
-if(rows.length&&rows[0].data){
-const d=rows[0].data;
-students=d.students||[];
-baseOverrides=d.baseOverrides||{};
-frozen=d.frozen||{};
-attendance=d.attendance||{};
-attNotes=d.attNotes||{};
-}
-}catch(e){
-document.getElementById(‘loading’).classList.add(‘hidden’);
-}
-const now=new Date();
+function init(){
+// Hide spinner immediately - don’t wait for network
+var now=new Date();
 document.getElementById(‘baseMonth’).value=now.getMonth();
 document.getElementById(‘baseYear’).value=now.getFullYear();
 document.getElementById(‘resumeMonth’).value=now.getMonth();
 document.getElementById(‘resumeYear’).value=now.getFullYear();
 renderChips();renderBase();
+document.getElementById(‘loading’).classList.add(‘hidden’);
+// Then try to load data in background
+fetch(SB_URL+’/rest/v1/agenda?id=eq.main&select=data’,{headers:{‘apikey’:SB_KEY,‘Authorization’:’Bearer ’+SB_KEY}})
+.then(function(r){return r.json();})
+.then(function(rows){
+if(rows.length&&rows[0].data){
+var d=rows[0].data;
+students=d.students||[];
+baseOverrides=d.baseOverrides||{};
+frozen=d.frozen||{};
+attendance=d.attendance||{};
+attNotes=d.attNotes||{};
+renderChips();renderBase();
+showToast(‘Agenda cargada!’);
+}
+})
+.catch(function(e){
+showToast(‘Sin conexion - modo offline’);
+});
 }
 init();
 
