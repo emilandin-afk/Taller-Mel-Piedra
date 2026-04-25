@@ -249,7 +249,7 @@ assignBase(mk,bid,i,el.value);
 let saveTO=null;
 function saveState(){
 const ind=document.getElementById(‘saveIndicator’);
-ind.textContent=‘Guardando…’;ind.className=‘save-indicator saving’;
+ind.textContent=‘Guardando...’;ind.className=‘save-indicator saving’;
 clearTimeout(saveTO);
 saveTO=setTimeout(function(){
 fetch(SB_URL+’/rest/v1/agenda?id=eq.main’,{
