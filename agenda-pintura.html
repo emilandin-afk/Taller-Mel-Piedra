@@ -211,7 +211,8 @@ table.att-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monosp
 <script>
 const SB_URL='https://oekskzpvpzzfspdilrhj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU';
-const SB_H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const SB_H_GET={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Accept':'application/json'};
+const SB_H_POST={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
 const SCHEDULE=[
   {id:'lunes',name:'Lunes',blocks:[{id:'lun-a',lbl:'14:30 – 17:30'},{id:'lun-b',lbl:'18:00 – 21:00'}]},
   {id:'martes',name:'Martes',blocks:[{id:'mar-a',lbl:'17:30 – 20:30'}]},
@@ -245,11 +246,9 @@ saveState();
 
 let saveTO=null;
 async function dbLoad(){
-  try{
-    const controller=new AbortController();
-    setTimeout(()=>controller.abort(),8000);
-    const r=await fetch(`${SB_URL,signal:controller.signal}/rest/v1/agenda?id=eq.main&select=data`,
-  const rows=await r.json();
+try{
+const r=await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main&select=data`,{headers:SB_H});
+const rows=await r.json();
 return rows.length?rows[0].data:null;
 }catch(e){console.error(‘Load error’,e);return null;}
 }
@@ -260,7 +259,7 @@ clearTimeout(saveTO);
 saveTO=setTimeout(async()=>{
 try{
 await fetch(`${SB_URL}/rest/v1/agenda?id=eq.main`,{
-method:‘PATCH’,headers:{…SB_H,‘Prefer’:‘return=minimal’},
+method:‘PATCH’,headers:SB_H_POST,
 body:JSON.stringify({data:{students,baseOverrides,frozen,attendance,attNotes}})
 });
 ind.textContent=‘✓ Guardado’;ind.className=‘save-indicator saved’;
