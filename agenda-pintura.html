@@ -518,8 +518,7 @@ if(tab===‘semana’)renderWeek();
 if(tab===‘resumen’)renderResumen();
 if(tab===‘disponibles’)renderDisponibles();
 }
-function showToast(msg){const t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);setTimeout(function(){t.classList.remove(‘show’);},2300);}
-function esc(s){return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 
 </body>
