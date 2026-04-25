@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="out">Cargando...</div>
+<script>
+const SB_URL='https://oekskzpvpzzfspdilrhj.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU';
+fetch(SB_URL+'/rest/v1/agenda?id=eq.main&select=data',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}})
+.then(r=>r.json())
+.then(d=>document.getElementById('out').textContent=JSON.stringify(d))
+.catch(e=>document.getElementById('out').textContent='ERROR: '+e.message);
+</script>
+</body>
+</html>
