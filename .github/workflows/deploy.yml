@@ -1,9 +1,17 @@
-name: Deploy
+name: Deploy agenda
 on: workflow_dispatch
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: curl -o agenda-pintura.html https://raw.githubusercontent.com/TallerMelPiedra/Taller-Mel-Piedra/main/disponibles-publico.html
-      - run: git config user.email "action@github.com" && git config user.name "Action" && git add agenda-pintura.html && git commit -m "reset" && git push
+      - name: Download agenda
+        run: |
+          curl -L "https://gist.githubusercontent.com/raw/PENDIENTE" -o agenda-pintura.html
+      - name: Commit
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add agenda-pintura.html
+          git commit -m "Update agenda" || echo "No changes"
+          git push
