@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="out">Cargando...</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://oekskzpvpzzfspdilrhj.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3NrenB2cHp6ZnNkcGlscmhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjAwNjksImV4cCI6MjA5MjYzNjA2OX0.3ElppfrPKvg38WHANydqwNklV2YMRTInJ0EFCWf-0WU');
+sb.from('agenda').select('data').eq('id','main').then(({data,error})=>{
+  document.getElementById('out').textContent=error?'ERROR: '+error.message:JSON.stringify(data);
+});
+</script>
+</body>
+</html>
