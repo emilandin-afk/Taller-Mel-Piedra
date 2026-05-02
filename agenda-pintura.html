@@ -260,8 +260,10 @@ function setSlot(mk,bid,idx,val){
 }
 
 let saveTO=null;
+let saveFail=false;
 async function saveState(){
   const ind=document.getElementById('saveIndicator');
+  if(saveFail){ind.textContent='Sin conexion';ind.className='save-indicator';return;}
   ind.textContent='Guardando';ind.className='save-indicator saving';
   clearTimeout(saveTO);
   saveTO=setTimeout(async()=>{
@@ -274,9 +276,10 @@ async function saveState(){
         ind.textContent='Guardado';ind.className='save-indicator saved';
         setTimeout(()=>{ind.textContent='';ind.className='save-indicator';},2000);
       } else {
-        ind.textContent='Error '+r.status;ind.className='save-indicator';
+        ind.textContent='Error';ind.className='save-indicator';
+        saveFail=true;
       }
-    }catch(e){ind.textContent='Error: '+e.message.slice(0,15);ind.className='save-indicator';}
+    }catch(e){ind.textContent='Sin conexion';ind.className='save-indicator';saveFail=true;}
   },800);
 }
 
