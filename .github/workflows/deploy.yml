@@ -5,6 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Download and fix agenda
         run: |
           curl -L "https://gist.githubusercontent.com/emilandin-afk/470b1e55469780d577350683ecbd985c/raw/agenda-pintura.html" -o agenda-pintura.html
@@ -21,7 +23,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
+          git pull origin main --rebase
           git add agenda-pintura.html
           git commit -m "Update agenda fixed" || echo "No changes"
-          git pull --rebase
           git push
