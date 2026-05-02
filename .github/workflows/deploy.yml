@@ -4,10 +4,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Download and fix agenda
+      - name: Deploy via API
         run: |
           curl -L "https://gist.githubusercontent.com/emilandin-afk/470b1e55469780d577350683ecbd985c/raw/agenda-pintura.html" -o agenda-pintura.html
           python3 - << 'PYEOF'
@@ -19,11 +16,24 @@ jobs:
           with open('agenda-pintura.html', 'w', encoding='utf-8') as f:
               f.write(content)
           PYEOF
-      - name: Commit
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git pull origin main --rebase
-          git add agenda-pintura.html
-          git commit -m "Update agenda fixed" || echo "No changes"
-          git push
+          python3 - << 'PYEOF2'
+          import base64, json, urllib.request, os
+          with open('agenda-pintura.html', 'rb') as f:
+              content_b64 = base64.b64encode(f.read()).decode()
+          token = os.environ['GITHUB_TOKEN']
+          repo = 'TallerMelPiedra/Taller-Mel-Piedra'
+          # Get current SHA
+          req = urllib.request.Request(f'https://api.github.com/repos/{repo}/contents/agenda-pintura.html',
+              headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'})
+          with urllib.request.urlopen(req) as r:
+              sha = json.loads(r.read())['sha']
+          # Update file
+          data = json.dumps({'message': 'Update agenda', 'content': content_b64, 'sha': sha}).encode()
+          req2 = urllib.request.Request(f'https://api.github.com/repos/{repo}/contents/agenda-pintura.html',
+              data=data, method='PUT',
+              headers={'Authorization': f'token {token}', 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json'})
+          with urllib.request.urlopen(req2) as r:
+              print('Done:', json.loads(r.read())['commit']['sha'])
+          PYEOF2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
