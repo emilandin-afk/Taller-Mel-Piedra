@@ -138,6 +138,7 @@ table.att-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monosp
   <button class="tab-btn" onclick="switchTab('semana',this)">Asistencia Semanal</button>
   <button class="tab-btn" onclick="switchTab('resumen',this)">Resumen Mensual</button>
   <button class="tab-btn" onclick="switchTab('disponibles',this)">Disponibles</button>
+  <button class="tab-btn" onclick="switchTab('pagos',this)">Pagos</button>
 </nav>
 <div id="tab-base" class="tab-panel active">
   <div class="card card-pad" style="margin-bottom:20px">
@@ -202,6 +203,14 @@ table.att-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monosp
   <div class="avail-grid" id="availGrid"></div>
 </div>
 </div>
+<div id="tab-pagos" class="tab-panel">
+  <div style="margin-bottom:20px;display:flex;align-items:center;gap:10px;justify-content:center">
+    <button class="btn btn-ghost" onclick="pagPrevMes()">&lt; Anterior</button>
+    <span id="pagosMesLbl" style="font-family:Cormorant Upright,serif;font-size:1.2rem;color:var(--accent);min-width:200px;text-align:center">-</span>
+    <button class="btn btn-ghost" onclick="pagNextMes()">Siguiente &gt;</button>
+  </div>
+  <div class="card card-pad" id="pagosCard"><div class="empty">Selecciona un mes.</div></div>
+</div>
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -219,6 +228,7 @@ const SCHEDULE=[
 const DOW={lunes:1,martes:2,miercoles:3,jueves:4,sabado:6};
 const SLOTS=8;
 let students=[],baseOverrides={},frozen={},attendance={},attNotes={};
+let pagMes=new Date().getMonth(),pagAnio=new Date().getFullYear();
 
 function monthKey(m,y){return y+'-'+String(m+1).padStart(2,'0');}
 function weekKey(mon){return 'w'+mon.toISOString().slice(0,10);}
@@ -476,7 +486,39 @@ function switchTab(tab,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');
-  if(tab==='semana')renderWeek();if(tab==='resumen')renderResumen();if(tab==='disponibles')renderDisponibles();
+  if(tab==='semana')renderWeek();if(tab==='resumen')renderResumen();if(tab==='disponibles')renderDisponibles();if(tab==='pagos')renderPagos();
+}
+
+function pagPrevMes(){
+  pagMes--;
+  if(pagMes<0){pagMes=11;pagAnio--;}
+  renderPagos();
+}
+function pagNextMes(){
+  pagMes++;
+  if(pagMes>11){pagMes=0;pagAnio++;}
+  renderPagos();
+}
+function renderPagos(){
+  const lbl=document.getElementById('pagosMesLbl');
+  const card=document.getElementById('pagosCard');
+  if(!lbl||!card)return;
+  const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  lbl.textContent=meses[pagMes]+' '+pagAnio;
+  const mk=monthKey(pagMes,pagAnio);
+  const seen=new Set();
+  SCHEDULE.forEach(function(day){
+    day.blocks.forEach(function(b){
+      getSlots(mk,b.id).forEach(function(s){if(s)seen.add(s);});
+    });
+  });
+  if(seen.size===0)students.forEach(function(s){seen.add(s);});
+  const lista=Array.from(seen).sort();
+  if(!lista.length){card.innerHTML='<div class="empty">Sin alumnos.</div>';return;}
+  card.innerHTML='<div class="card-title">'+lista.length+' alumnos</div>'+
+    lista.map(function(n){
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--border2);font-family:Cormorant Garamond,serif;font-size:0.95rem;color:var(--off)">'+esc(n)+'</div>';
+    }).join('');
 }
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
 function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(String(s)));return d.innerHTML;}
